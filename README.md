@@ -310,3 +310,4 @@ android {
 
 代码以你选择的许可证开源（建议 MIT / Apache-2.0；请自行补一个 `LICENSE` 文件）。
 `imgui-1.91.8`、`freetype`、`cubism`、`live2d` 目录中的代码版权归各自作者所有，遵循其原始许可证。
+何意味？Trigger rebuild
