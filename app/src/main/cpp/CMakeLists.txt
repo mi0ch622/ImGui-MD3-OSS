@@ -13,10 +13,16 @@ set(ANDROID_STL c++_static CACHE STRING "" FORCE)
 # imgui 源码 (v1.91.8)
 set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui-1.91.8)
 
-# FreeType 路径 (修改为你本地的 FreeType 路径)
-set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/freetype/include)
-set(FREETYPE_LIB ${CMAKE_CURRENT_SOURCE_DIR}/freetype/libfreetype.a)
-
+# ================= FreeType 源码构建配置 =================
+# 直接从 freetype-src 源码编译，彻底避免手动编译或下载预编译 .a 文件的 ABI 兼容问题
+set(FT_DISABLE_ZLIB ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_BZIP2 ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
+add_subdirectory(freetype-src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/freetype-src/include)
+# =========================================================
 
 # imgui 核心 + Android / OpenGL3 后端 + FreeType 后端
 add_library(imgui STATIC
@@ -33,8 +39,9 @@ target_include_directories(imgui PUBLIC
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
     ${IMGUI_DIR}/misc/freetype
-    ${FREETYPE_INCLUDE_DIR}
 )
+# 将 freetype 作为 imgui 的公共依赖，这样 imguidemo 链接 imgui 时会自动继承
+target_link_libraries(imgui PUBLIC freetype)
 
 # =====================================================================
 # Live2D Cubism SDK (方案照 ImGuiLive2d-main: 模型数据编译进 so, 无需 assets)
@@ -99,7 +106,7 @@ add_library(imguidemo SHARED
 target_link_libraries(imguidemo
     imgui
     live2dapp                                   # Live2D 应用层(自动带上 cubism + Core 静态库)
-    ${FREETYPE_LIB} -lz
+    -lz
     android EGL GLESv2 log
     # 显式链接 libc++ 静态库: 本环境 NDK clang 驱动不会因 -static-libstdc++ 自动补 -lc++_static
     c++_static c++abi
