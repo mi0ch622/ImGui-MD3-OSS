@@ -46,27 +46,27 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
 
-      # 删除了 android-actions/setup-android@v3，改为手动安装
       - name: Install Android SDK, NDK and CMake
         run: |
-          # 找到系统自带的 sdkmanager 路径
+          # 直接找到系统自带的 sdkmanager
           SDKMANAGER=$(find /usr/local/lib/android/sdk/cmdline-tools -name sdkmanager | head -n 1)
           echo "Using sdkmanager: $SDKMANAGER"
           
           # 接受所有许可
           yes | $SDKMANAGER --licenses
           
-          # 安装你项目需要的组件（platforms, build-tools, NDK, CMake）
+          # 安装项目需要的组件
           yes | $SDKMANAGER --install "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;27.1.12297006" "cmake;3.22.1"
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Clean project
+        run: ./gradlew clean --stacktrace --no-daemon
+
       - name: Build APK
-        run: ./gradlew ${{ matrix.task }} --stacktrace
+        run: ./gradlew ${{ matrix.task }} --stacktrace --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
