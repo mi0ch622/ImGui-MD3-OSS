@@ -6,10 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-  ANDROID_NDK_ROOT: ${{ github.workspace }}/android-sdk/ndk/27.1.12297006
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -55,16 +51,10 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          sdk-tools-version: '9123335'
-          cmdline-tools-version: '9.0'
-          platform-tools-version: '33.0.5'
-          build-tools-version: '33.0.2'
-          platforms: 'android-33'
 
-      - name: Install NDK and CMake
+      - name: Install Android SDK, NDK and CMake
         run: |
-          yes | sdkmanager --install "ndk;27.1.12297006" "cmake;3.22.1"
+          yes | sdkmanager --install "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;27.1.12297006" "cmake;3.22.1"
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
