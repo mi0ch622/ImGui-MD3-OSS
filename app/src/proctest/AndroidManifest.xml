@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ★ proctest 风味专用清单 (只在 assembleProctestDebug 时生效)
+         去掉主界面的启动图标, 只留“进程测试(原版ImGui)” 一个入口 -->
+    <application>
+        <activity
+            android:name=".CjImGuiActivity"
+            tools:node="remove" />
+    </application>
+</manifest>

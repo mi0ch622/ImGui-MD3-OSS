@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MCP 服务器（MT管理器 等）走的是本机 / 局域网的 http:// 明文地址，
+  Android 9+ 默认禁止 CLEARTEXT，会直接报
+  “CLEARTEXT communication to 127.0.0.1 not permitted by network security policy”。
+  这里放行明文，否则本地 MCP 根本连不上。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
