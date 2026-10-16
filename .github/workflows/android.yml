@@ -18,8 +18,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flavor: [ full, proctest, range ]
-        build_type: [ debug, release ]
+        include:
+          - flavor: full
+            build_type: debug
+            task: assembleFullDebug
+          - flavor: full
+            build_type: release
+            task: assembleFullRelease
+          - flavor: proctest
+            build_type: debug
+            task: assembleProctestDebug
+          - flavor: proctest
+            build_type: release
+            task: assembleProctestRelease
+          - flavor: range
+            build_type: debug
+            task: assembleRangeDebug
+          - flavor: range
+            build_type: release
+            task: assembleRangeRelease
 
     steps:
       - name: Checkout code
@@ -53,7 +70,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK
-        run: ./gradlew assemble${{ matrix.flavor }}${ { matrix.build_type == 'debug' && 'Debug' || 'Release' } } --stacktrace
+        run: ./gradlew ${{ matrix.task }} --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
